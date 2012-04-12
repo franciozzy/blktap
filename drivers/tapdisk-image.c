@@ -546,5 +546,7 @@ tapdisk_image_stats(td_image_t *image, td_stats_t *st)
 	tapdisk_driver_stats(image->driver, st);
 	tapdisk_stats_leave(st, '}');
 
+	tapdisk_stats_field(st, "rdonly", "hhu", td_flag_test(image->flags, TD_OPEN_RDONLY)?1:0);
+
 	tapdisk_stats_leave(st, '}');
 }
