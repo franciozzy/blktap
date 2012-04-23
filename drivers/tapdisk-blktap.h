@@ -39,8 +39,10 @@ typedef struct td_blktap_req td_blktap_req_t;
 
 struct td_blktap_stats {
 	struct {
-		unsigned long long      in;
-		unsigned long long      out;
+		unsigned long long      rd_in;
+		unsigned long long      rd_out;
+		unsigned long long      wr_in;
+		unsigned long long      wr_out;
 	} reqs;
 	struct {
 		unsigned long long      in;
