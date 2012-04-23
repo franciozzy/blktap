@@ -612,8 +612,8 @@ tapdisk_blktap_stats(td_blktap_t *tap, td_stats_t *st)
 	tapdisk_stats_field(st, "minor", "d", tap->minor);
 
 	tapdisk_stats_field(st, "reqs", "[");
-	tapdisk_stats_val(st, "llu", tap->stats.reqs.rd_in);
-	tapdisk_stats_val(st, "llu", tap->stats.reqs.wr_in);
+	tapdisk_stats_val(st, "llu", tap->stats.reqs.rd_out);
+	tapdisk_stats_val(st, "llu", tap->stats.reqs.wr_out);
 	tapdisk_stats_leave(st, ']');
 
 	tapdisk_stats_field(st, "inflight", "[");
