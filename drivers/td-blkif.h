@@ -120,6 +120,9 @@ struct td_xenblkif {
      * stats
      */
     struct td_xenblkif_stats stats;
+
+    void **reqs_buf;
+    unsigned n_reqs_buf_free;
 };
 
 /* TODO rename from xenio */
