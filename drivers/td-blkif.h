@@ -121,8 +121,12 @@ struct td_xenblkif {
      */
     struct td_xenblkif_stats stats;
 
-    void **reqs_buf;
-    unsigned n_reqs_buf_free;
+    /**
+     * Request buffer cache.
+     */
+    void **reqs_bufcache;
+    unsigned n_reqs_bufcache_free;
+    event_id_t reqs_bufcache_evtid;
 };
 
 /* TODO rename from xenio */
