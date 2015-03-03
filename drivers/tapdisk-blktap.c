@@ -164,6 +164,10 @@ tapdisk_blktap_error_status(td_blktap_t *tap, int error)
 static void
 __tapdisk_blktap_push_response(td_blktap_t *tap, int final)
 {
+	blktap_ring_rsp_t *rsp;
+
+	rsp = BLKTAP_GET_RESPONSE(tap, tap->rsp_prod_pvt);
+
 	tap->rsp_prod_pvt++;
 
 	if (final) {
@@ -171,7 +175,10 @@ __tapdisk_blktap_push_response(td_blktap_t *tap, int final)
 		tapdisk_blktap_kick(tap);
 	}
 
-	tap->stats.reqs.out++;
+	if (rsp->operation == BLKTAP_OP_READ)
+		tap->stats.reqs.rd_out++;
+	else
+		tap->stats.reqs.wr_out++;
 }
 
 static void
@@ -336,7 +343,10 @@ tapdisk_blktap_get_requests(td_blktap_t *tap)
 		blktap_ring_req_t *msg = BLKTAP_GET_REQUEST(tap, rc);
 		td_blktap_req_t *req;
 
-		tap->stats.reqs.in++;
+		if (msg->operation == BLKTAP_OP_READ)
+			tap->stats.reqs.rd_in++;
+		else
+			tap->stats.reqs.wr_in++;
 
 		req = tapdisk_blktap_alloc_request(tap);
 		if (!req) {
@@ -590,8 +600,13 @@ tapdisk_blktap_stats(td_blktap_t *tap, td_stats_t *st)
 	tapdisk_stats_field(st, "minor", "d", tap->minor);
 
 	tapdisk_stats_field(st, "reqs", "[");
-	tapdisk_stats_val(st, "llu", tap->stats.reqs.in);
-	tapdisk_stats_val(st, "llu", tap->stats.reqs.out);
+	tapdisk_stats_val(st, "llu", tap->stats.reqs.rd_out);
+	tapdisk_stats_val(st, "llu", tap->stats.reqs.wr_out);
+	tapdisk_stats_leave(st, ']');
+
+	tapdisk_stats_field(st, "inflight", "[");
+	tapdisk_stats_val(st, "llu", tap->stats.reqs.rd_in-tap->stats.reqs.rd_out);
+	tapdisk_stats_val(st, "llu", tap->stats.reqs.wr_in-tap->stats.reqs.wr_out);
 	tapdisk_stats_leave(st, ']');
 
 	tapdisk_stats_field(st, "kicks", "[");
